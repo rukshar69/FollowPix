@@ -1,2 +1,18 @@
 # FollowPix
-A Django app where users share photos and reactions
+A Django app where users share photos and reactions. Here, users upload photos for their followers to view and like. They can also search for other users, view their profiles, photos, and follow them.
+
+## Sample Deployment
+Deployed to PythonAnywhere: [ruksharahmed7.pythonanywhere.com](http://ruksharahmed7.pythonanywhere.com/)
+
+## Features
+- Basic authentication using Django's default user model
+- [Homepage](http://ruksharahmed7.pythonanywhere.com/)(requires login) lists latest posts from the users followed by the logged in user. Each post displays the photo, a caption, and the number of likes. 
+    - On the right, there is a list of suggested users to follow. 
+    - In the header, there is a search bar to search for users. On the top right, there is a user photo thumbnail.
+- Profile page
+- Some example usernames and passwords are provided in [users.txt](https://github.com/rukshar69/FollowPix/blob/main/social_book/users.txt)
+
+## Reference
+- [django-social-media-website](https://github.com/tomitokko/django-social-media-website)
+- [django-social-media-template ](https://github.com/tomitokko/django-social-media-template)
+- [Deploy a Django web app to Python Anywhere](https://www.youtube.com/watch?v=xtnUwvjOThg)
