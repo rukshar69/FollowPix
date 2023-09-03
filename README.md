@@ -12,9 +12,13 @@ Deployed to PythonAnywhere: [ruksharahmed7.pythonanywhere.com](http://ruksharahm
         - Profile page
         - Account Settings
         - Logout
+    - On the right, there is a button to upload a photo along with its caption.
 
 ![Profile thumbnail header options](https://github.com/rukshar69/FollowPix/blob/main/images_readme/1.png)
+    
+    
 
+![Profile thumbnail header options](https://github.com/rukshar69/FollowPix/blob/main/images_readme/2.png)
 - Profile page
 - Some example usernames and passwords are provided in [users.txt](https://github.com/rukshar69/FollowPix/blob/main/social_book/users.txt)
 
