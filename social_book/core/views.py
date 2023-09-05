@@ -77,6 +77,60 @@ def index(request):
     # Render the 'index.html' template with the user profile, feed list, and list of suggested user profiles
     return render(request, 'index.html', {'user_profile': user_profile, 'posts':feed_list, 'suggestions_username_profile_list': suggestions_username_profile_list[:4]})
 
+@login_required(login_url='signin')
+def follower_list(request):
+    profile_username = request.GET.get('profile_username')
+    # Retrieve the currently logged in user object
+    user_object = User.objects.get(username=profile_username)
+
+    # Retrieve the profile of the currently logged in user
+    user_profile = Profile.objects.get(user=user_object)
+
+    # Retrieve all users that are followers of the current user
+    user_followers = FollowersCount.objects.filter(user=profile_username)
+    user_followers_profile_list = []
+    for follower in user_followers:
+        #user_followers_id_list.append(follower.follower)
+        follower_user = User.objects.get(username=follower.follower)
+        follower_profile = Profile.objects.get(user=follower_user)
+        user_followers_profile_list.append(follower_profile)
+    
+    
+    print(user_followers_profile_list)
+    context = {
+        'user_followers': user_followers_profile_list,
+        'user_profile': user_profile,
+    }
+    return render(request, 'search_follower.html', context)
+
+@login_required(login_url='signin')
+def following_list(request):
+    # Retrieve the currently logged in user object
+    profile_username = request.GET.get('profile_username')
+    user_object = User.objects.get(username=profile_username)
+
+    # Retrieve the profile of the currently logged in user
+    user_profile = Profile.objects.get(user=user_object)
+
+    # Retrieve all users that are followers of the current user
+    user_following = FollowersCount.objects.filter(follower=profile_username)
+    user_following_profile_list = []
+    for user in user_following:
+        #user_followers_id_list.append(follower.follower)
+        following_user = User.objects.get(username=user.user)
+        following_profile = Profile.objects.get(user=following_user)
+        user_following_profile_list.append(following_profile)
+    
+    
+    print(user_following_profile_list)
+    context = {
+        'user_following': user_following_profile_list,
+        'user_profile': user_profile,
+    }
+    return render(request, 'search_following.html', context)
+
+
+
 # Define a view function called 'search' that requires user authentication.
 # If the user is not logged in, they will be redirected to the 'signin' URL.
 @login_required(login_url='signin')
