@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile, Post, LikePost, FollowersCount
 from itertools import chain
 import random
+from django.http import JsonResponse
 # Create your views here.
 
 @login_required(login_url='signin')
@@ -212,18 +213,24 @@ def like_post(request):
 
     like_filter = LikePost.objects.filter(post_id=post_id, username=username).first()
 
-    if like_filter == None:
+    if like_filter is None:
         new_like = LikePost.objects.create(post_id=post_id, username=username)
         new_like.save()
-        post.no_of_likes = post.no_of_likes+1
+        post.no_of_likes = post.no_of_likes + 1
         post.save()
-        return redirect('/')
+        liked = True
     else:
         like_filter.delete()
-        post.no_of_likes = post.no_of_likes-1
+        post.no_of_likes = post.no_of_likes - 1
         post.save()
-        return redirect('/')
-    
+        liked = False
+
+    response_data = {
+        'liked': liked,
+        'like_count': post.no_of_likes,
+    }
+
+    return JsonResponse(response_data)
 @login_required(login_url='signin')
 def profile(request, pk):
     user_object = User.objects.get(username=pk)

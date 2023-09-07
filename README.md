@@ -23,6 +23,7 @@ Deployed to PythonAnywhere: [ruksharahmed7.pythonanywhere.com](http://ruksharahm
 - Profile page shows user details, follower and following count, and a list of photos uploaded by the user.
 - Account settings allows the user to add profile photo, location, and bio.
 - Some example usernames and passwords are provided in [users.txt](https://github.com/rukshar69/FollowPix/blob/main/social_book/users.txt)
+- In order to prevent page-reload after liking a post, **jQuery/Ajax** is used in [index.html](), the page for post-feed. Now, only the like-count will change and the rest will remain as it is.
 
 ## Reference
 - [django-social-media-website](https://github.com/tomitokko/django-social-media-website)
