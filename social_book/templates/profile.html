@@ -32,7 +32,7 @@
 					<div class="add-btn">
 						<span style="color: white; font-size: 27px; margin-right: 520px;"><b><u><a href="/">Home</a></u></b></span>
 						
-					
+						
 						{% if user_post_length == 0 %}
 						<span style="color: white; font-size: 27px;"><b>No Post</b></span>
 						{% elif user_post_length == 1 %}
@@ -63,7 +63,11 @@
 							<a data-ripple=""><button type="submit" style="background-color: #ffc0cb; border: #ffc0cb;">{{button_text}}</button></a>
 						{% endif %}
 
+						<!-- Add the Logout Button Here -->
+    					<a href="{% url 'logout' %}" style="color: white; font-size: 27px;"><b>Logout</b></a>
+					
 					</div>
+
 				</form>
 
 				<!-- <form class="edit-phto">
@@ -95,22 +99,7 @@
 									  <h5 style="color: black;white-space: nowrap; width: 110px; font-size: 27px; "><b>@{{user_profile.user.username}}</b><!--<i class="fa fa-check-circle" style="color: #48dbfb;" aria-hidden="true"></i>--></h5>
 									  <!--<span>Group Admin</span>-->
 									</li>
-									<!--<li>
-										<a class="" href="javascript:void(0)" title="" data-ripple="">Go live!</a>
-										<a class="" href="javascript:void(0)" title="" data-ripple="">Music</a>
-										<a class="" href="emporium/index-3.html" title="" data-ripple="">Emporium</a>
-										<a class="" href="fitness/index.html" title="" data-ripple="">Health Inspection</a>
-										<a class="" href="settings/account-setting.html" title="" data-ripple="">Settings</a>
-										<a class="" href="javascript:void(0)" title="" data-ripple="">Upload</a>
-										<a class="" href="time-line.html" title="" data-ripple="">time line</a>
-										<a class="" href="timeline-photos.html" title="" data-ripple="">Photos</a>
-										<a class="" href="timeline-videos.html" title="" data-ripple="">Videos</a>
-										<a class="" href="timeline-friends.html" title="" data-ripple="">Friends</a>
-										<a class="" href="timeline-groups.html" title="" data-ripple="">Groups</a>
-										<a class="" href="about.html" title="" data-ripple="">about</a>
-										<a class="" href="#" title="" data-ripple="">more</a>
-
-									</li>-->
+									
 								</ul>
 							</div>
 						</div>
@@ -137,17 +126,19 @@
 
 							<div class="col-lg-6">
 								<div class="central-meta">
-									<ul class="photos">
-					
-										{% for post in user_posts %}
-										<li>
-											<a class="strip" href="{{post.image.url}}" title="" data-strip-group="mygroup" data-strip-group-options="loop: false">
-												<img src="{{post.image.url}}" style="height: 250px; width: 300px;" alt=""></a>
-										</li>
-										{% endfor %}	
-										
-									</ul>
-									<!--<div class="lodmore"><button class="btn-view btn-load-more"></button></div>-->
+                                    <ul>
+                                        {% for post in user_posts %}
+                                            <li>
+                                                <a class="strip" href="{{post.image.url}}" title="" data-strip-group="mygroup" data-strip-group-options="loop: false">
+                                                    <img src="{{post.image.url}}" style="height: 250px; width: 300px;" alt=""></a>
+                                                <br><strong>Caption</strong>: {{post.caption}}
+                                                <br><span >Like Count: <span><b>{{ post.no_of_likes }}</b></span>
+                                                <br><span>Posted at: <b>{{post.created_at}}</b></span>
+
+                                                <hr>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>	
 								</div><!-- photos -->
 							</div><!-- centerl meta -->
 							<div class="col-lg-3">
