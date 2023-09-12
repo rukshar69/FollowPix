@@ -40,3 +40,15 @@ class FollowersCount(models.Model):
 
     def __str__(self):
         return self.user
+    
+class Notification(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    recipient = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='notifications_received')
+    sender = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='notifications_sent')
+    notification_type = models.CharField(max_length=20)  # 'like' or 'follow'
+    #post_id = models.UUIDField(null=True, blank=True)  # For 'like' notifications, store the liked post's ID
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True, related_name='notifications')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender.user.username} to {self.recipient.user.username}: {self.notification_type}"

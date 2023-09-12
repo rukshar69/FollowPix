@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Post, LikePost, FollowersCount
+from .models import Profile, Post, LikePost, FollowersCount, Notification
 from itertools import chain
 import random
+from django.http import JsonResponse
 # Create your views here.
 
 @login_required(login_url='signin')
@@ -74,8 +75,13 @@ def index(request):
     # Flatten the nested username_profile_list into a single-level list
     suggestions_username_profile_list = list(chain(*username_profile_list))
 
+    user_profile = get_object_or_404(Profile, user__username=request.user.username)
+    # Retrieve the 5 most recent notifications for the logged-in user
+    notifications = Notification.objects.filter(recipient=user_profile).order_by('-timestamp')[:5]
+
+
     # Render the 'index.html' template with the user profile, feed list, and list of suggested user profiles
-    return render(request, 'index.html', {'user_profile': user_profile, 'posts':feed_list, 'suggestions_username_profile_list': suggestions_username_profile_list[:4]})
+    return render(request, 'index.html', {'user_profile': user_profile, 'posts':feed_list, 'suggestions_username_profile_list': suggestions_username_profile_list[:4], 'notifications': notifications})
 
 @login_required(login_url='signin')
 def follower_list(request):
@@ -188,17 +194,35 @@ def upload(request):
 @login_required(login_url='signin')
 def follow(request):
     if request.method == 'POST':
-        follower = request.POST['follower']
-        user = request.POST['user']
+        follower_username = request.POST['follower']
+        user_username = request.POST['user']
 
-        if FollowersCount.objects.filter(follower=follower, user=user).first():
-            delete_follower = FollowersCount.objects.get(follower=follower, user=user)
+        # Get the Profile objects for follower and user
+        follower_profile = get_object_or_404(Profile, user__username=follower_username)
+        user_profile = get_object_or_404(Profile, user__username=user_username)
+
+        if FollowersCount.objects.filter(follower=follower_username, user=user_username).first():
+            delete_follower = FollowersCount.objects.get(follower=follower_username, user=user_username)
             delete_follower.delete()
-            return redirect('/profile/'+user)
+
+            
+
+            return redirect('/profile/' + user_username)
         else:
-            new_follower = FollowersCount.objects.create(follower=follower, user=user)
+            new_follower = FollowersCount.objects.create(follower=follower_username, user=user_username)
             new_follower.save()
-            return redirect('/profile/'+user)
+
+            # Create a notification instance for the follow action
+            notification_type = 'follow'
+
+            notification = Notification.objects.create(
+                recipient=user_profile,
+                sender=follower_profile,
+                notification_type=notification_type,
+            )
+            notification.save()
+
+            return redirect('/profile/' + user_username)
     else:
         return redirect('/')
 
@@ -207,6 +231,7 @@ def follow(request):
 def like_post(request):
     username = request.user.username
     post_id = request.GET.get('post_id')
+    user_profile = Profile.objects.get(user=request.user)
 
     post = Post.objects.get(id=post_id)
 
@@ -217,13 +242,44 @@ def like_post(request):
         new_like.save()
         post.no_of_likes = post.no_of_likes+1
         post.save()
-        return redirect('/')
+        
+        is_liked = True
+
+        # Get the User object associated with the post's owner
+        post_owner_user = User.objects.get(username=post.user)
+        # Get the Profile associated with the User object
+        recipient_profile = Profile.objects.get(user=post_owner_user)
+        post = Post.objects.get(id=post_id) #get the post object to be saved in notification
+
+        # Create a notification for the post owner
+        notification = Notification.objects.create(
+            sender=user_profile,
+            recipient=recipient_profile,
+            notification_type='like',
+            post = post,
+        )
+        notification.save()
     else:
         like_filter.delete()
         post.no_of_likes = post.no_of_likes-1
         post.save()
-        return redirect('/')
+        is_liked = False
+
+        # Get the User object associated with the post's owner
+        post_owner_user = User.objects.get(username=post.user)
+        # Get the Profile associated with the User object
+        recipient_profile = Profile.objects.get(user=post_owner_user)
+
+        
+
+    data = {
+        'liked': is_liked,
+        'like_count': post.no_of_likes,
+    }
+
+    return JsonResponse(data)
     
+
 @login_required(login_url='signin')
 def profile(request, pk):
     user_object = User.objects.get(username=pk)
