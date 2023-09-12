@@ -25,7 +25,7 @@ Deployed to PythonAnywhere: [ruksharahmed7.pythonanywhere.com](http://ruksharahm
     
 
 ![Profile thumbnail header options](https://github.com/rukshar69/FollowPix/blob/main/images_readme/2.png)
-- Profile page shows user details, follower and following count, and a list of photos uploaded by the user.
+- Profile page shows user details, follower and following count, and a list of photos, along with its caption and like count, uploaded by the user. Clicking on a photo opens it in a lightbox. Clicking on the follower and following count will show the list of followers and following users.
 - Account settings allows the user to add profile photo, location, and bio.
 - Some example usernames and passwords are provided in [users.txt](https://github.com/rukshar69/FollowPix/blob/main/social_book/users.txt)
 - In order to prevent page-reload after liking a post, **jQuery/Ajax** is used in [index.html](http://ruksharahmed7.pythonanywhere.com/), the page for post-feed. Now, only the like-count will change and the rest will remain as it is.
